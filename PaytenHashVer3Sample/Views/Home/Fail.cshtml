@@ -1,0 +1,32 @@
+@model dynamic
+
+@{
+    ViewBag.Title = "Fail";
+    Layout = "_Layout";
+}
+
+@section Styles
+{
+    <style>
+        .card{
+            background: rgba(222,222,222,0.8);
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 2px 3px #b40303;
+            margin: 0 auto;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            width: 70%;
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="card">
+    <div class="card-body">
+        <h3>Ödeme Tamamlanamadı!</h3>
+        <strong>Detaylar</strong><br/>
+        <p>@TempData["responseParams"]</p>
+    </div>
+</div>

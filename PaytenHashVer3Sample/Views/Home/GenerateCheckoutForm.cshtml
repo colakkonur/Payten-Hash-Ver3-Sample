@@ -1,0 +1,34 @@
+@model List<KeyValuePair<string, string>>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script type="text/javascript" language="javascript">
+        function moveWindow() {
+            document.pay_form.submit();
+        }
+    </script>
+</head>
+<body onload="javascript:moveWindow()">
+<form name="pay_form" method="post" action="https://entegrasyon.asseco-see.com.tr/fim/est3Dgate">
+    @{
+        // modelden kelen parametreler
+        foreach (var param in Model)
+        {
+            <text>
+                <input type="hidden" name="@param.Key" value="@param.Value"/><br/>
+            </text>
+        }
+    }
+    <noscript>
+        <input type="submit" value="Complete Payment"/>
+    </noscript>
+</form>
+</body>
+</html>
