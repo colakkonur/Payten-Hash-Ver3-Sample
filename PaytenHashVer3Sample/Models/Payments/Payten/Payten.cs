@@ -11,9 +11,9 @@ public class Payten
         postParams.Add(new KeyValuePair<string, string>("ClientId", _clientId));
         postParams.Add(new KeyValuePair<string, string>("oid", $"{request.ReturnOId}")); // sipariş numarası
         postParams.Add(new KeyValuePair<string, string>("amount", $"{request.Amount}")); // tutar
-        postParams.Add(new KeyValuePair<string, string>("okUrl", $"{request.Scheme}://{request.Host}/order/ordersuccess"));
-        postParams.Add(new KeyValuePair<string, string>("failUrl", $"{request.Scheme}://{request.Host}/order/orderfail"));
-        postParams.Add(new KeyValuePair<string, string>("callbackUrl",$"{request.Scheme}://{request.Host}/order/ordercallback"));
+        postParams.Add(new KeyValuePair<string, string>("okUrl", $"{request.Scheme}://{request.Host}/home/success"));
+        postParams.Add(new KeyValuePair<string, string>("failUrl", $"{request.Scheme}://{request.Host}/home/fail"));
+        postParams.Add(new KeyValuePair<string, string>("callbackUrl",$"{request.Scheme}://{request.Host}/home/callback"));
         postParams.Add(new KeyValuePair<string, string>("TranType", "Auth"));
         postParams.Add(new KeyValuePair<string, string>("Instalment", ""));
         postParams.Add(new KeyValuePair<string, string>("currency",
@@ -25,7 +25,7 @@ public class Payten
         postParams.Add(new KeyValuePair<string, string>("storetype", "3d_pay_hosting"));
         postParams.Add(new KeyValuePair<string, string>("lang", $"{request.Lang}"));
         postParams.Add(new KeyValuePair<string, string>("hashAlgorithm", "ver3"));
-        postParams.Add(new KeyValuePair<string, string>("refreshtime", "5"));
+        postParams.Add(new KeyValuePair<string, string>("refreshtime", "3"));
         postParams.Add(new KeyValuePair<string, string>("email", $"{request.CustomerEmail}"));
         postParams.Add(new KeyValuePair<string, string>("tel", $"{request.CustomerPhoneNumber}"));
         postParams.Add(new KeyValuePair<string, string>("BillToName",$"{request.CustomerNameSurname} {request.CustomerId}"));

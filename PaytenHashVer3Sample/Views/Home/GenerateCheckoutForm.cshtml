@@ -5,30 +5,35 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="tr">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
-    <script type="text/javascript" language="javascript">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <script type="text/javascript">
         function moveWindow() {
             document.pay_form.submit();
         }
     </script>
 </head>
 <body onload="javascript:moveWindow()">
+@* post adresinizi bankanıza göre değiştirebilirsiniz. *@
 <form name="pay_form" method="post" action="https://entegrasyon.asseco-see.com.tr/fim/est3Dgate">
     @{
-        // modelden kelen parametreler
         foreach (var param in Model)
         {
-            <text>
-                <input type="hidden" name="@param.Key" value="@param.Value"/><br/>
-            </text>
+            <input type="hidden" name="@param.Key" value="@param.Value"/>
+            <br/>
         }
     }
     <noscript>
         <input type="submit" value="Complete Payment"/>
     </noscript>
 </form>
+<div class="container h-100 d-flex justify-content-center align-items-center">
+    <h2>
+        Güvenli ödeme için banka sayfasına yönlendiriliyorsunuz. Lütfen bekleyiniz..
+    </h2>
+</div>
 </body>
 </html>

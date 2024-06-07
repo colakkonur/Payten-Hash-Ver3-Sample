@@ -17,6 +17,8 @@ public class HomeController : Controller
         return View();
     }
 
+    #region Generate Checkout Form and Handle Payment Result
+
     public IActionResult GenerateCheckoutForm()
     {
         var paymentModel = new Payten.InitializeModel()
@@ -49,24 +51,25 @@ public class HomeController : Controller
         var procReturnCode = responseParams.FirstOrDefault(x => x.Key == "ProcReturnCode").Value;
         var response = responseParams.FirstOrDefault(x => x.Key == "Response").Value;
 
-        string formattedResponseParams = string.Join(" | ", responseParams.Select(x => x.Key + ": " + x.Value));
-        TempData["responseParams"] = formattedResponseParams;
+        var serializedResponseParams = System.Text.Json.JsonSerializer.Serialize(responseParams); // modelde gönderilemez
+        TempData["ResponseValues"] = serializedResponseParams;
 
         bool checkHash = new Payten().CheckHash(responseParams);
         if (checkHash)
         {
             if (procReturnCode == "00" && response == "Approved")
             {
-                return View();
+                // bu aşamada iş akışınıza göre aksiyon alabilirsiniz.
+                return RedirectToAction("OrderCompleted", "Home");
             }
             else
             {
-                return RedirectToAction("Fail");
+                return RedirectToAction("OrderFailed", "Home", new { fromSuccess = true});
             }
         }
         else
         {
-            return RedirectToAction("Fail");
+            return RedirectToAction("OrderFailed", "Home", new { fromSuccess = true });
         }
     }
 
@@ -82,9 +85,9 @@ public class HomeController : Controller
         var orderId = responseParams.FirstOrDefault(x => x.Key == "returnOid").Value;
         var mdStatus = responseParams.FirstOrDefault(x => x.Key == "mdStatus").Value;
 
-        string formattedResponseParams = string.Join(" | ", responseParams.Select(x => x.Key + ": " + x.Value));
-        TempData["responseParams"] = formattedResponseParams;
-
+        var serializedResponseParams = System.Text.Json.JsonSerializer.Serialize(responseParams); // modelde gönderilemez
+        TempData["ResponseValues"] = serializedResponseParams;
+        
         bool checkHash = new Payten().CheckHash(responseParams);
         if (checkHash)
         {
@@ -93,13 +96,12 @@ public class HomeController : Controller
             // • 2, 3, 4 = Kart kayıtlı değil (Half 3D)
             // • 5, 6, 7, 8 = Geçerli doğrulama yok veya sistem hatası
             // • 0 = Doğrulama Başarısız
-
-            return View();
+            return RedirectToAction("OrderFailed", "Home");
         }
         else
         {
             // Hash değeri uyuşmazlığı
-            return View();
+            return RedirectToAction("OrderFailed", "Home");
         }
     }
 
@@ -128,11 +130,12 @@ public class HomeController : Controller
         {
             if (procReturnCode == "00" && response == "Approved")
             {
+                // bu aşamada iş akışınıza göre aksiyon alabilirsiniz.
                 // save to database
             }
             else
             {
-                // save to database
+                // işlem başarısız
             }
         }
         else
@@ -142,4 +145,36 @@ public class HomeController : Controller
 
         await Response.WriteAsync("Approved");
     }
+
+    #endregion
+    
+
+    #region Show Order Result Pages
+
+    public IActionResult OrderCompleted()
+    {
+        var responseParams = System.Text.Json.JsonSerializer.Deserialize<List<KeyValuePair<string, string>>>(TempData["ResponseValues"].ToString());
+        return View(responseParams);
+    }
+    public IActionResult OrderFailed(bool fromSuccess = false)
+    {
+        var responseParams = System.Text.Json.JsonSerializer.Deserialize<List<KeyValuePair<string, string>>>(TempData["ResponseValues"].ToString());
+        var orderFailedValues = responseParams;
+        if (fromSuccess)
+        {
+            // Success sayfasından gelen hatalı işlem sonucu
+            // 1. procReturnCode == "00" && response == "Approved" koşulu sağlanmamışsa
+            // 2. Hash değeri uyuşmamışsa
+        }
+        var model = new PaymentErrorModel()
+        {
+            ErrorCode = orderFailedValues.FirstOrDefault(w=>w.Key == "mdStatus").Value,
+            ErrorMessage = $"{orderFailedValues.FirstOrDefault(w=>w.Key == "ErrMsg").Value} - Response: {orderFailedValues.FirstOrDefault(w=>w.Key == "Response").Value}",
+            AllParameters = string.Join(" | ", orderFailedValues.Select(x => x.Key + ": " + x.Value))
+        };
+        return View(model);
+    }
+
+    #endregion
+   
 }

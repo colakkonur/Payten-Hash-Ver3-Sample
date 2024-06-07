@@ -1,4 +1,4 @@
-@model dynamic
+@model PaymentErrorModel
 
 @{
     ViewBag.Title = "Fail";
@@ -14,11 +14,14 @@
             border-radius: 10px;
             box-shadow: 0 2px 3px #b40303;
             margin: 0 auto;
-            justify-content: center;
-            align-items: center;
-            height: 400px;
+            height: auto;
             width: 70%;
             text-align: center;
+        }
+        /*card-body içerisinden yazıların taşmasını engellemek için*/
+        .card-body{
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 }
@@ -27,6 +30,11 @@
     <div class="card-body">
         <h3>Ödeme Tamamlanamadı!</h3>
         <strong>Detaylar</strong><br/>
-        <p>@TempData["responseParams"]</p>
+        <p>@Model.ErrorMessage</p><br/>
+        <p>@Model.ErrorCode</p><br/>
+        <p>
+            <strong>Tüm parametreler:</strong><br/>
+            @Model.AllParameters
+        </p>
     </div>
 </div>

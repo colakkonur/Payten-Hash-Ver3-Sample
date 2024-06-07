@@ -1,8 +1,31 @@
-@model dynamic
+@model List<KeyValuePair<string, string>>
 
 @{
-    ViewBag.Title = "title";
+    var formattedResponseParams = string.Join(" | ", Model.Select(x => x.Key + ": " + x.Value));
+    ViewBag.Title = "Success";
     Layout = "_Layout";
 }
 
-<h2>title</h2>
+@section Styles
+{
+    <style>
+        .card{
+            background: rgba(222,222,222,0.8);
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 2px 3px #03b40a;
+            margin: 0 auto;
+            height: auto;
+            width: 70%;
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="card">
+    <div class="card-body">
+        <h3>Ödeme Başarılı</h3>
+        <strong>Ödeme Detayları</strong><br/>
+        <p>@formattedResponseParams</p>
+    </div>
+</div>
